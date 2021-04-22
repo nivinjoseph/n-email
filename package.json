@@ -1,6 +1,6 @@
 {
   "name": "@nivinjoseph/n-email",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "MJML based email development framework",
   "main": "index.js",
   "scripts": {

@@ -1,0 +1,10 @@
+{
+    "env": "dev",
+    "webpackDistDir": "./test-emails/dist",
+    "awsS3AccessKeyId": "AKIAS2VBH5G7P6RFAT3C",
+    "awsS3SecretAccessKey": "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",
+    "awsS3Bucket": "public.dev.wr.sofdev.io",
+    "sendGridApiKey": "",
+    "sendGridSenderEmail": "",
+    "litmusEmail": ""
+}

@@ -80,7 +80,6 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
@@ -102,3 +101,22 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Ignore Mac .DS_Store files
+.DS_Store
+
+# Ignores compiled TypeScript files
+tsconfig.tsbuildinfo
+src/**/*.js
+src/**/*.map
+test/**/*.js
+test/**/*.map
+test-emails/**/*.js
+test-emails/**/*.map
+
+# Client dist folder, this is a build artifact of test-app
+test-emails/dist
+
+# Webpack config compiled artifacts
+webpack.config.js
+webpack.config.js.map

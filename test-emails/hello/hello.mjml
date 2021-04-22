@@ -1,0 +1,43 @@
+<mjml>
+  <mj-body>
+    <mj-section background-color="#f0f0f0">
+      <mj-column>
+        <mj-text font-style="italic" font-size="20px" color="#626262">{{title}}</mj-text>
+      </mj-column>
+    </mj-section>
+     <mj-section background-url="$hero-background-image" background-size="cover" background-repeat="no-repeat">
+      <mj-column width="600px">
+        <mj-text align="center" color="#fff" font-size="40px" font-family="Helvetica Neue">Slogan here</mj-text>
+        <mj-button background-color="$primary-color" href="{{placeholder}}">Promotion</mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#fafafa">
+      <mj-column width="400px">
+        <mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262">My Awesome Text</mj-text>
+        <mj-text color="#525252">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu semper augue semper. Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus, sit amet suscipit nibh. Proin nec commodo purus.
+          Sed eget nulla elit. Nulla aliquet mollis faucibus.</mj-text>
+        <mj-button background-color="#F45E43" href="https://www.outrise.com">Learn ore</mj-button>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="white">
+      <mj-column>
+        <mj-image width="200px" src="$squirrel-image"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262">Find amazing places</mj-text>
+        <mj-text color="#525252">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu semper augue semper. Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus.</mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-section background-color="#fbfbfb">
+      <mj-column>
+        <mj-image width="100px" src="http://191n.mj.am/img/191n/3s/x0l.png"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image width="100px" src="http://191n.mj.am/img/191n/3s/x01.png"></mj-image>
+      </mj-column>
+      <mj-column>
+        <mj-image width="100px" src="http://191n.mj.am/img/191n/3s/x0s.png"></mj-image>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>

@@ -100,13 +100,13 @@ module.exports = {
     entry: ["./test-emails/index.js"],
     output: {
         filename: "index.js",
-        path: path.resolve(process.cwd(), ConfigurationManager.getConfig<string>("webpackDistDir")),
+        path: path.resolve(process.cwd(), ConfigurationManager.getConfig<string>("distDir")),
         publicPath: ""
     },
     devtool: false,
     devServer: {
         // contentBase: "./dist",
-        contentBase: ConfigurationManager.getConfig<string>("webpackDistDir")
+        contentBase: ConfigurationManager.getConfig<string>("distDir")
     },
     optimization: {
         minimize: false

@@ -1,6 +1,6 @@
 {
     "env": "dev",
-    "webpackDistDir": "./test-emails/dist",
+    "distDir": "./test-emails/dist",
     "awsS3AccessKeyId": "",
     "awsS3SecretAccessKey": "",
     "awsS3Bucket": "",

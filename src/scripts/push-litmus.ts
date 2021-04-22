@@ -9,10 +9,10 @@ import { SendGridEmailService } from "./send-grid-email-service";
 
 async function execute(): Promise<void>
 {
-    const webpackDistDir = ConfigurationManager.getConfig<string>("webpackDistDir");
-    given(webpackDistDir, "webpackDistDir").ensureHasValue().ensureIsString();
+    const distDir = ConfigurationManager.getConfig<string>("distDir");
+    given(distDir, "distDir").ensureHasValue().ensureIsString();
     
-    const distDir = Path.resolve(process.cwd(), webpackDistDir);
+    const distDirPath = Path.resolve(process.cwd(), distDir);
 
     const litmusEmail = ConfigurationManager.getConfig<string>("litmusEmail");
     given(litmusEmail, "litmusEmail").ensureHasValue().ensureIsString()
@@ -21,7 +21,7 @@ async function execute(): Promise<void>
     const logger = new ConsoleLogger(LogDateTimeZone.local);
     const sendGrid = new SendGridEmailService();
     const timestamp = (new Date()).toLocaleString();
-    const files = Fs.readdirSync(distDir).where(t => t.endsWith(".html"));
+    const files = Fs.readdirSync(distDirPath).where(t => t.endsWith(".html"));
 
     if (files.isEmpty)
     {
@@ -34,7 +34,7 @@ async function execute(): Promise<void>
         await files
             .forEachAsync(async (file) =>
             {
-                const filePath = Path.resolve(distDir, file);
+                const filePath = Path.resolve(distDirPath, file);
                 const html = Fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
                 const subject = `${file.substr(0, file.length - ".html".length)} ${timestamp}`;
 

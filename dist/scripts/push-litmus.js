@@ -10,16 +10,16 @@ const Path = require("path");
 const send_grid_email_service_1 = require("./send-grid-email-service");
 function execute() {
     return tslib_1.__awaiter(this, void 0, void 0, function* () {
-        const webpackDistDir = n_config_1.ConfigurationManager.getConfig("webpackDistDir");
-        n_defensive_1.given(webpackDistDir, "webpackDistDir").ensureHasValue().ensureIsString();
-        const distDir = Path.resolve(process.cwd(), webpackDistDir);
+        const distDir = n_config_1.ConfigurationManager.getConfig("distDir");
+        n_defensive_1.given(distDir, "distDir").ensureHasValue().ensureIsString();
+        const distDirPath = Path.resolve(process.cwd(), distDir);
         const litmusEmail = n_config_1.ConfigurationManager.getConfig("litmusEmail");
         n_defensive_1.given(litmusEmail, "litmusEmail").ensureHasValue().ensureIsString()
             .ensure(t => t.endsWith("@litmusemail.com"), "must be a litmus email");
         const logger = new n_log_1.ConsoleLogger(n_log_1.LogDateTimeZone.local);
         const sendGrid = new send_grid_email_service_1.SendGridEmailService();
         const timestamp = (new Date()).toLocaleString();
-        const files = Fs.readdirSync(distDir).where(t => t.endsWith(".html"));
+        const files = Fs.readdirSync(distDirPath).where(t => t.endsWith(".html"));
         if (files.isEmpty) {
             yield logger.logWarning("No files to push.");
         }
@@ -27,7 +27,7 @@ function execute() {
             yield logger.logWarning(`${files.length} files to push.`);
             yield files
                 .forEachAsync((file) => tslib_1.__awaiter(this, void 0, void 0, function* () {
-                const filePath = Path.resolve(distDir, file);
+                const filePath = Path.resolve(distDirPath, file);
                 const html = Fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
                 const subject = `${file.substr(0, file.length - ".html".length)} ${timestamp}`;
                 yield sendGrid.sendEmail(litmusEmail, subject, html, true);

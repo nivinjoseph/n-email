@@ -51,7 +51,7 @@
     "typescript-tslint-plugin": "^0.5.5"
   },
   "dependencies": {
-    "@nivinjoseph/n-app": "^3.0.43",
+    "@nivinjoseph/n-app": "^3.0.44",
     "@nivinjoseph/n-config": "^1.0.31",
     "@nivinjoseph/n-defensive": "^1.0.33",
     "@nivinjoseph/n-exception": "^1.0.19",

@@ -60,7 +60,8 @@ module.exports = function (content) {
         }
         html = result.html;
     }
-    catch (error) {
+    catch (e) {
+        const error = e;
         const logger = this.getLogger("mjml-loader");
         logger.error(`MJML error in ${this.resourcePath.replace(process.cwd(), "").substring(1)}`);
         if (error.errors && Array.isArray(error.errors) && error.errors.isNotEmpty) {

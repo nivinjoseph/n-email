@@ -79,8 +79,9 @@ module.exports = function (content: any)
 
         html = result.html;
     }
-    catch (error)
+    catch (e)
     {
+        const error = e as any;
         const logger = this.getLogger("mjml-loader");
         logger.error(`MJML error in ${this.resourcePath.replace(process.cwd(), "").substring(1)}`);
 

@@ -4,6 +4,7 @@
     "awsS3AccessKeyId": "",
     "awsS3SecretAccessKey": "",
     "awsS3Bucket": "",
+    "awsRegion": "",
     "sendGridApiKey": "",
     "sendGridSenderEmail": "",
     "litmusEmail": ""

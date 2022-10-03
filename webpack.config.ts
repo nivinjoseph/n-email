@@ -28,7 +28,9 @@ const moduleRules: Array<any> = [
                 options: {
                     awsS3AccessKeyId: ConfigurationManager.getConfig("awsS3AccessKeyId"),
                     awsS3SecretAccessKey: ConfigurationManager.getConfig("awsS3SecretAccessKey"),
-                    awsS3Bucket: ConfigurationManager.getConfig("awsS3Bucket")
+                    awsS3Bucket: ConfigurationManager.getConfig("awsS3Bucket"),
+                    awsRegion: ConfigurationManager.getConfig("awsRegion"),
+                    useAcceleration: false
                 }
             },
             {

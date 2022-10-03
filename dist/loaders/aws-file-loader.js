@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const tslib_1 = require("tslib");
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 require("@nivinjoseph/n-ext");
 const Path = require("path");
 const aws_sdk_1 = require("aws-sdk");
@@ -17,30 +18,37 @@ module.exports = function (content) {
     const awsS3AccessKeyId = options.getValue("awsS3AccessKeyId");
     const awsS3SecretAccessKey = options.getValue("awsS3SecretAccessKey");
     const awsS3Bucket = options.getValue("awsS3Bucket");
-    const fileStore = new S3FileStore(awsS3AccessKeyId, awsS3SecretAccessKey, awsS3Bucket);
+    const awsRegion = options.getValue("awsRegion");
+    const useAcceleration = options.getValue("useAcceleration");
+    const fileStore = new S3FileStore(awsS3AccessKeyId, awsS3SecretAccessKey, awsS3Bucket, awsRegion, useAcceleration);
     fileStore.store(Path.basename(this.resourcePath), content)
         .then(url => callback(null, `module.exports = ${JSON.stringify(url)}`))
         .catch(e => callback(e));
 };
 module.exports.raw = true;
 class S3FileStore {
-    constructor(awsS3AccessKeyId, awsS3SecretAccessKey, awsS3Bucket) {
+    constructor(awsS3AccessKeyId, awsS3SecretAccessKey, awsS3Bucket, awsRegion, useAcceleration) {
         (0, n_defensive_1.given)(awsS3AccessKeyId, "awsS3AccessKeyId").ensureHasValue().ensureIsString();
         (0, n_defensive_1.given)(awsS3SecretAccessKey, "awsS3SecretAccessKey").ensureHasValue().ensureIsString();
         (0, n_defensive_1.given)(awsS3Bucket, "awsS3Bucket").ensureHasValue().ensureIsString();
+        (0, n_defensive_1.given)(awsRegion, "awsRegion").ensureHasValue().ensureIsString();
+        (0, n_defensive_1.given)(useAcceleration, "useAcceleration").ensureHasValue().ensureIsBoolean()
+            .ensure(_ => !awsS3Bucket.contains("."), "cannot use acceleration with buckets that have '.' in their name");
         this._connection = new aws_sdk_1.S3({
             signatureVersion: "v4",
-            region: "us-east-1",
+            region: awsRegion,
             credentials: {
                 accessKeyId: awsS3AccessKeyId,
                 secretAccessKey: awsS3SecretAccessKey
-            }
+            },
+            useAccelerateEndpoint: useAcceleration
         });
         this._bucket = awsS3Bucket;
         this._maxFileSize = 1000000 * 1000;
+        this._useAcceleration = useAcceleration;
     }
     store(fileName, fileData) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             (0, n_defensive_1.given)(fileName, "fileName").ensureHasValue().ensureIsString();
             (0, n_defensive_1.given)(fileData, "fileData").ensureHasValue().ensureIsType(Buffer).ensure(t => t.byteLength > 0);
             fileName = fileName.replaceAll(":", "-").trim();
@@ -54,9 +62,13 @@ class S3FileStore {
                 Key: id,
                 Body: fileData,
                 ContentType: fileMime,
-                ACL: "public-read",
+                ACL: "public-read"
             }).promise();
-            return `https://s3.amazonaws.com/${this._bucket}/${id}`;
+            return this._useAcceleration
+                ? `https://${this._bucket}.s3-accelerate.amazonaws.com/${id}`
+                : this._bucket.contains(".")
+                    ? `https://s3.amazonaws.com/${this._bucket}/${id}`
+                    : `https://${this._bucket}.s3.amazonaws.com/${id}`;
         });
     }
 }

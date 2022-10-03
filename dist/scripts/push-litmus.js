@@ -9,16 +9,16 @@ const Fs = require("fs");
 const Path = require("path");
 const send_grid_email_service_1 = require("./send-grid-email-service");
 function execute() {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+    return tslib_1.__awaiter(this, void 0, void 0, function* () {
         const distDir = n_config_1.ConfigurationManager.getConfig("distDir");
         (0, n_defensive_1.given)(distDir, "distDir").ensureHasValue().ensureIsString();
         const distDirPath = Path.resolve(process.cwd(), distDir);
         const litmusEmail = n_config_1.ConfigurationManager.getConfig("litmusEmail");
         (0, n_defensive_1.given)(litmusEmail, "litmusEmail").ensureHasValue().ensureIsString()
             .ensure(t => t.endsWith("@litmusemail.com"), "must be a litmus email");
-        const logger = new n_log_1.ConsoleLogger(n_log_1.LogDateTimeZone.local);
+        const logger = new n_log_1.ConsoleLogger({ logDateTimeZone: n_log_1.LogDateTimeZone.local });
         const sendGrid = new send_grid_email_service_1.SendGridEmailService();
-        const timestamp = (new Date()).toLocaleString();
+        const timestamp = new Date().toLocaleString();
         const files = Fs.readdirSync(distDirPath).where(t => t.endsWith(".html"));
         if (files.isEmpty) {
             yield logger.logWarning("No files to push.");
@@ -26,7 +26,7 @@ function execute() {
         else {
             yield logger.logWarning(`${files.length} files to push.`);
             yield files
-                .forEachAsync((file) => (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+                .forEachAsync((file) => tslib_1.__awaiter(this, void 0, void 0, function* () {
                 const filePath = Path.resolve(distDirPath, file);
                 const html = Fs.readFileSync(filePath, { encoding: "utf8", flag: "r" });
                 const subject = `${file.substr(0, file.length - ".html".length)} ${timestamp}`;

@@ -15,7 +15,7 @@ class SendGridEmailService {
         this._senderEmail = sendGridSenderEmail;
     }
     sendEmail(toEmail, subject, body, isBodyHtml = false) {
-        return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
             (0, n_defensive_1.given)(toEmail, "email").ensureHasValue().ensureIsString();
             (0, n_defensive_1.given)(subject, "subject").ensureHasValue().ensureIsString();
             (0, n_defensive_1.given)(body, "body").ensureHasValue().ensureIsString();
@@ -32,6 +32,7 @@ class SendGridEmailService {
                 message.html = body;
             else
                 message.text = body;
+            // eslint-disable-next-line no-useless-catch
             try {
                 yield SendGrid.send(message);
             }

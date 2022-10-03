@@ -41,6 +41,7 @@ export class SendGridEmailService
         else
             message.text = body;
 
+        // eslint-disable-next-line no-useless-catch
         try 
         {
             await SendGrid.send(message);

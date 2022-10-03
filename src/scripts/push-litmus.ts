@@ -18,9 +18,9 @@ async function execute(): Promise<void>
     given(litmusEmail, "litmusEmail").ensureHasValue().ensureIsString()
         .ensure(t => t.endsWith("@litmusemail.com"), "must be a litmus email");
 
-    const logger = new ConsoleLogger(LogDateTimeZone.local);
+    const logger = new ConsoleLogger({logDateTimeZone: LogDateTimeZone.local});
     const sendGrid = new SendGridEmailService();
-    const timestamp = (new Date()).toLocaleString();
+    const timestamp = new Date().toLocaleString();
     const files = Fs.readdirSync(distDirPath).where(t => t.endsWith(".html"));
 
     if (files.isEmpty)

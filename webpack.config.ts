@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 import { ConfigurationManager } from "@nivinjoseph/n-config";
@@ -11,14 +12,13 @@ const isDev = env === "dev";
 
 const moduleRules: Array<any> = [
     {
-        test: /\.(png|jpg|jpeg|gif)$/i,
+        test: /\.(png|jpg|jpeg|gif|webp|svg)$/i,
         use: [
             isDev ? {
                 loader: "file-loader",
                 options: {
                     esModule: false,
-                    // @ts-ignore
-                    name: (resourcePath: string, resourceQuery: string) =>
+                    name: (_resourcePath: string, _resourceQuery: string): string =>
                     {
                         return "[name].[ext]";
                     }
@@ -28,25 +28,14 @@ const moduleRules: Array<any> = [
                 options: {
                     awsS3AccessKeyId: ConfigurationManager.getConfig("awsS3AccessKeyId"),
                     awsS3SecretAccessKey: ConfigurationManager.getConfig("awsS3SecretAccessKey"),
-                    awsS3Bucket: ConfigurationManager.getConfig("awsS3Bucket"),
+                    awsS3Bucket: ConfigurationManager.getConfig("awsS3Bucket")
                 }
             },
             {
-                loader: "@nivinjoseph/n-app/dist/loaders/raster-image-loader.js",
+                loader: "./src/loaders/image-loader.js",
                 options: {
                     jpegQuality: 80,
                     pngQuality: 60
-                }
-            }
-        ]
-    },
-    {
-        test: /\.svg$/,
-        use: [
-            {
-                loader: "file-loader",
-                options: {
-                    esModule: false
                 }
             }
         ]
@@ -91,10 +80,14 @@ const plugins = [
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({
         APP_CONFIG: JSON.stringify({})
-    }),
+    })
 ];
 
 module.exports = {
+    stats: {
+        errorDetails: true
+    },
+    context: process.cwd(),
     mode: isDev ? "development" : "production",
     target: "web",
     entry: ["./test-emails/index.js"],
@@ -105,8 +98,14 @@ module.exports = {
     },
     devtool: false,
     devServer: {
+        static: {
+            directory: ConfigurationManager.getConfig<string>("distDir")
+        },
+        // hot: true,
+        // liveReload: true,
+        watchFiles: ["test-emails/**/*.mjml", "test-emails/**/*.js"]
         // contentBase: "./dist",
-        contentBase: ConfigurationManager.getConfig<string>("distDir")
+        // contentBase: ConfigurationManager.getConfig<string>("distDir")
     },
     optimization: {
         minimize: false

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import "@nivinjoseph/n-ext";
 import * as Path from "path";
 import { S3 } from "aws-sdk";
@@ -5,10 +6,11 @@ import * as Mime from "mime-types";
 import { given } from "@nivinjoseph/n-defensive";
 import { Uuid } from "@nivinjoseph/n-util";
 import { ArgumentException } from "@nivinjoseph/n-exception";
+import { LoaderContext } from "webpack";
 const loaderUtils = require("loader-utils");
 
 
-module.exports = function (content: any)
+module.exports = function (this: LoaderContext<any>, content: any): void
 {
     if (typeof content === "string")
         content = Buffer.from(content);
@@ -74,9 +76,11 @@ class S3FileStore
             Key: id,
             Body: fileData,
             ContentType: fileMime,
-            ACL: "public-read",
+            ACL: "public-read"
         }).promise();
 
-        return `https://s3.amazonaws.com/${this._bucket}/${id}`;
+        return this._bucket.contains(".")
+            ? `https://s3.amazonaws.com/${this._bucket}/${id}` 
+            : `https://${this._bucket}.s3.amazonaws.com/${id}`;
     }
 }

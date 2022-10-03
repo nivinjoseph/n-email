@@ -1,21 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { ConfigurationManager } from "@nivinjoseph/n-config";
 import "@nivinjoseph/n-ext";
 const loaderUtils = require("loader-utils");
 import * as Path from "path";
 import * as Fs from "fs";
 import mjml2html = require("mjml");
-import { Exception } from "@nivinjoseph/n-exception";
+import { ApplicationException } from "@nivinjoseph/n-exception";
+import { LoaderContext } from "webpack";
 const config = require(Path.resolve(process.cwd(), "webpack.config.js"));
 const resolve = require("enhanced-resolve").create.sync({ alias: config.resolve && config.resolve.alias || [] });
 
 
-module.exports = function (content: any)
+module.exports = function (this: LoaderContext<any>, content: any): string
 {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions, @typescript-eslint/no-unnecessary-condition
     this.cacheable && this.cacheable();
 
     // const localVariables = require(this.resourcePath.replace(".mjml", ".json"));
 
     const jsFilePath = this.resourcePath.replace(".mjml", ".js");
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const loaderContext = this;
 
     const absolutePath = resolve(Path.dirname(jsFilePath), jsFilePath);
@@ -23,12 +27,13 @@ module.exports = function (content: any)
 
 
     const jsFile = Fs.readFileSync(jsFilePath, "utf8").replace("require(", "// require(");
-    const localVariables = (new Function(`
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+    const localVariables = new Function(`
             'use strict';
             return (function(exports) {
                 ${jsFile}
                 return exports.default; 
-            });`))()({});
+            });`)()({});
 
     const options = loaderUtils.getOptions(this) || {};
     const globalVariables = options.variables || {};
@@ -69,6 +74,8 @@ module.exports = function (content: any)
     try 
     {
         const result = mjml2html(content, mjmlOptions as any);
+        
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         if (result.errors && Array.isArray(result.errors) && result.errors.isNotEmpty)
         {
             const logger = this.getLogger("mjml-loader");
@@ -82,6 +89,7 @@ module.exports = function (content: any)
     catch (e)
     {
         const error = e as any;
+        
         const logger = this.getLogger("mjml-loader");
         logger.error(`MJML error in ${this.resourcePath.replace(process.cwd(), "").substring(1)}`);
 
@@ -90,14 +98,14 @@ module.exports = function (content: any)
             const fileName = Path.basename(this.resourcePath);
             error.errors.forEach((e: any) => logger.error(e.formattedMessage.replace(process.cwd(), fileName)));
 
-            throw new Exception("MJML error", error);
+            throw new ApplicationException("MJML error", error);
         }
         else
             throw error;
     }
 
     if (isDev)
-        html = html.replace("</body>", `<script src="index.js"></script>`);
+        html = html.replace("</body>", `<script src="index.js"></script></body>`);
 
     return html;
 };

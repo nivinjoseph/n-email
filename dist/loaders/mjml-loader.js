@@ -8,6 +8,7 @@ const Path = require("path");
 const Fs = require("fs");
 const mjml2html = require("mjml");
 const n_exception_1 = require("@nivinjoseph/n-exception");
+const n_util_1 = require("@nivinjoseph/n-util");
 const config = require(Path.resolve(process.cwd(), "webpack.config.js"));
 const resolve = require("enhanced-resolve").create.sync({ alias: config.resolve && config.resolve.alias || [] });
 module.exports = function (content) {
@@ -25,7 +26,7 @@ module.exports = function (content) {
             'use strict';
             return (function(exports) {
                 ${jsFile}
-                return exports.default; 
+                return exports.staticVars; 
             });`)()({});
     const options = loaderUtils.getOptions(this) || {};
     const globalVariables = options.variables || {};
@@ -77,8 +78,20 @@ module.exports = function (content) {
         else
             throw error;
     }
-    if (isDev)
+    if (isDev) {
         html = html.replace("</body>", `<script src="index.js"></script></body>`);
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        const dynamicVariables = new Function(`
+                'use strict';
+                return (function(exports) {
+                    ${jsFile}
+                    return exports.dynamicVars; 
+                });`)()({});
+        if (dynamicVariables) {
+            const template = new n_util_1.Templator(html);
+            html = template.render(dynamicVariables);
+        }
+    }
     return html;
 };
 //# sourceMappingURL=mjml-loader.js.map

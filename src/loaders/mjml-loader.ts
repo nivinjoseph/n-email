@@ -7,6 +7,7 @@ import * as Fs from "fs";
 import mjml2html = require("mjml");
 import { ApplicationException } from "@nivinjoseph/n-exception";
 import { LoaderContext } from "webpack";
+import { Templator } from "@nivinjoseph/n-util";
 const config = require(Path.resolve(process.cwd(), "webpack.config.js"));
 const resolve = require("enhanced-resolve").create.sync({ alias: config.resolve && config.resolve.alias || [] });
 
@@ -32,7 +33,7 @@ module.exports = function (this: LoaderContext<any>, content: any): string
             'use strict';
             return (function(exports) {
                 ${jsFile}
-                return exports.default; 
+                return exports.staticVars; 
             });`)()({});
 
     const options = loaderUtils.getOptions(this) || {};
@@ -105,7 +106,23 @@ module.exports = function (this: LoaderContext<any>, content: any): string
     }
 
     if (isDev)
+    {
         html = html.replace("</body>", `<script src="index.js"></script></body>`);
+        
+        // eslint-disable-next-line @typescript-eslint/no-implied-eval
+        const dynamicVariables = new Function(`
+                'use strict';
+                return (function(exports) {
+                    ${jsFile}
+                    return exports.dynamicVars; 
+                });`)()({});
+                
+        if (dynamicVariables)
+        {
+            const template = new Templator(html);
+            html = template.render(dynamicVariables);
+        }
+    }
 
     return html;
 };
